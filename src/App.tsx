@@ -3,7 +3,10 @@ import axios, { AxiosResponse } from "axios"
 import { currentField, field, UpdateHandler, User } from './api/types';
 import ApiWS from "./api/ws"
 
-import "./styles.css"
+import './styles.css';
+import createFieldArray from './utils/createFieldArray';
+import { Field } from './components/Field';
+import PlayerBoard from './components/PlayerBoard';
 
 type GlobalCtx = {
   currentUser: User | null;
@@ -18,7 +21,23 @@ const globalContext = React.createContext<GlobalCtx>({
 });
 
 const App = () => {
-  let globalState: User[];
+  let globalState: User[] = [
+    {
+      id: 1,
+      name: "Muhma",
+      field: [],
+    },
+    {
+      id: 2,
+      name: "Sega",
+      field: [],
+    },
+    {
+      id: 3,
+      name: "Masim",
+      field: [],
+    },
+  ];
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentField, setCurrentField] = useState<currentField | null>(null);
@@ -64,7 +83,14 @@ const App = () => {
       setCurrentField: setCurrentField,
       currentUser: currentUser
     }}>
-      {/* {isGameStarted ?} */}
+      <>
+        <h1 className="mainTitle">Морской бой</h1>
+        <div className="container">
+          {globalState.map((user) => (
+            <PlayerBoard user={user}/>
+          ))}
+        </div>
+      </>
     </globalContext.Provider>
   );
 };

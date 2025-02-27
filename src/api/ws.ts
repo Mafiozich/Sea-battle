@@ -40,13 +40,13 @@ export default new class ApiWS {
     this.listeners = this.listeners.filter(cb => cb !== callback);
   }
 
-  public invoke(input: Invoke) {
+  public invoke(data: Invoke) {
     if (!this._isOpen) {
       console.error("[ApiWS]: can not invoke method. No connection");
       return;
     }
     
-    this.ws.send(JSON.stringify(input));
+    this.ws.send(JSON.stringify(data));
   }
 
   get isOpen() {
