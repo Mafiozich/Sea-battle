@@ -1,20 +1,11 @@
-import React, { useEffect } from "react";
-import axios from "axios";
+import Battle from "./components/Battle";
 
 function App() {
-  useEffect(() => {
-    const serverIp = prompt("Your IP:");
-    const username = prompt("Your name:");
-
-    if (username?.trim() && serverIp?.trim()) {
-      try {
-        const response = axios.post<string, username>(serverIp, { username });
-        console.log(response.data);
-      } catch (error) {}
-    }
-  });
-
-  return <></>;
+  return (
+    <div>
+      <Battle />
+    </div>
+  );
 }
 
 export default App;
