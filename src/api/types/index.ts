@@ -1,11 +1,10 @@
-
 export interface field {
   isShooted: boolean;
   isShip: boolean;
 }
 
 export interface currentField extends field {
-  enemyname: string;
+  username: string;     //в кого стреляют
   id: number;
 }
 
@@ -46,9 +45,8 @@ type InvokeType = "sendShoot" | "sendAuth";
 
 type Invoke$Shoot = {
   payload: {
-    username: string;
-    enemyname: string;
-    shootId: number;    //id в хтмл
+    username: string;       //в кого стреляют
+    shootIndex: number;     //id в хтмл
   }
 }
 

@@ -1,21 +1,20 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import createFieldArray from "../utils/createFieldArray";
 import { Field } from "./Field";
-import { field, User } from "../api/types";
+import { User, field } from "../api/types";
 import ApiWS from "../api/ws";
 import { globalContext } from "../App";
 import { getAdjacentCells } from "../utils/getAdjacentCells";
-import { identifyFieldCell } from "../utils/identifyFieldCell";
 
 type OwnProps = {
   user: User;
-  onclick: React.Dispatch<React.SetStateAction<number>> | null;
-  isShipsEnd: number;
+  isPrepare: boolean;
 };
 
-const PlayerBoard: React.FC<OwnProps> = ({ user, onclick, isShipsEnd }) => {
-  const { currentUser } = useContext(globalContext);
-  const [field, setField] = useState<field[][]>(createFieldArray());
+const PlayerBoard: React.FC<OwnProps> = ({ user, isPrepare=false }) => {
+  const { currentUser, currentField, setCurrentField, ships, setShips } = useContext(globalContext);
+  const [field, setField] = useState<field[]>(createFieldArray());
+
 
   function shootShip(id: string) {
     if (!currentUser) return;
@@ -31,56 +30,96 @@ const PlayerBoard: React.FC<OwnProps> = ({ user, onclick, isShipsEnd }) => {
     ApiWS.invoke({
       type: "sendShoot",
       payload: {
-        enemyname: user.name,
-        shootId: parseInt(id),
-        username: currentUser?.name,
+        username: user.name,
+        shootIndex: parseInt(id),
       },
     });
   }
 
-  const placeShip = (strid: string) => {
-    let id = +strid - 1;
+  // const placeShip = (strid: string) => {
+  //   let id = +strid;
+  //   setCurrentField({...field[id], id, username: ""});
 
-    setField(prev => {
-      let newField = [...prev];
-
-      let currentCell = identifyFieldCell(newField, id);
-      let blockedCellIds = getAdjacentCells(id);
+  //   setField(prev => {
+  //     let newField = [...prev];
+  //     let blockedCellIds = getAdjacentCells(id);
       
-      if (currentCell.isShip === false) {
-        currentCell.isShip = true;
-        blockedCellIds.forEach(index => {
-          let cell = identifyFieldCell(newField, index);
-          cell.isShooted = true;
-        });
+  //     if (newField[id].isShip === false) {
+  //       newField[id].isShip = true;
+  //       blockedCellIds.forEach(index => field[index].isShooted = true);
+  //     } else {
+  //       newField[id].isShip = false;
+  //       blockedCellIds.forEach(index => field[index].isShooted = false);
 
-        onclick && onclick(prev => prev - 1);
+  //       let ships = newField.map((cell, i) => {
+  //         if (cell.isShip) return i;
+  //       });
+
+  //       ships.forEach(el => {
+  //         if (el) {
+  //           let blockedCellIds = getAdjacentCells(el);
+  //           blockedCellIds.forEach(i => field[i].isShooted = true)
+  //         }
+  //       });
+  //     }
+      
+  //     if (ships === 1) {
+  //       newField.forEach(cell => cell.isShooted = true);
+
+  //       return newField;
+  //     }
+
+  //     return newField;
+  //   });
+  // }
+
+  const placeShip = (strid: string) => {
+    let id = +strid;
+    setCurrentField({ ...field[id], id, username: "" });
+
+    setField((prev) => {
+      const newField = prev.map(cell => ({ ...cell })); // Создаем глубокую копию
+      const blockedCellIds = getAdjacentCells(id);
+
+      if (!newField[id].isShip) {
+        // Добавление корабля
+        newField[id].isShip = true;
+        blockedCellIds.forEach(index => {
+          if (newField[index]) newField[index].isShooted = true;
+        });
+        setShips(prevShips => prevShips - 1);
       } else {
-        currentCell.isShip = false;
-        blockedCellIds.forEach(index => {
-          let cell = identifyFieldCell(newField, index);
-          cell.isShooted = false;
+        newField[id].isShip = false;
+        newField.forEach(cell => cell.isShooted = false);
+        
+        newField.forEach((cell, i) => {
+          if (cell.isShip) {
+            getAdjacentCells(i).forEach(index => {
+              if (newField[index]) newField[index].isShooted = true;
+            });
+          }
         });
-
-        onclick && onclick(prev => prev + 1);
+        
+        setShips(prevShips => prevShips + 1);
       }
-
-      if (isShipsEnd === 1) {
-        newField.forEach(row => row.forEach(cell => cell.isShooted = true));
-        return newField;
-      };
 
       return newField;
     });
-  };
+};
+
+  useEffect(() => {
+    if (ships === 0) {
+      setField(prev => prev.map(cell => ({ ...cell, isShooted: true })));
+    }
+  }, [ships]);
 
   return (
     <div className="playerBoard">
       <h3 className="boardTitle">{user.name}</h3>
       <Field
         field={field} 
-        onclick={onclick ? placeShip : shootShip} 
-        isHide={onclick ? false : true}
+        onclick={isPrepare ? placeShip : shootShip} 
+        isHide={isPrepare ? false : true}
       />
     </div>
   );

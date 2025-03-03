@@ -1,17 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import PlayerBoard from "./PlayerBoard";
 import { globalContext } from "../App";
-import { field } from "../api/types";
 
 const PrepareToGame: React.FC = () => {
-  const { currentUser } = useContext(globalContext);
-  const [ships, setShips] = useState(5);
+  const { currentUser, ships } = useContext(globalContext);
 
   if (!currentUser) return;
 
   return (
     <div className="prepare-container">
-      <PlayerBoard user={currentUser} onclick={setShips} isShipsEnd={ships} />
+      <PlayerBoard user={currentUser} isPrepare />
       <div className="ship-placement-block">
         <h3>Ships: <span>{ships}</span>X</h3>
         <button>Начать игру</button>

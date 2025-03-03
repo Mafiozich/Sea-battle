@@ -13,12 +13,16 @@ type GlobalCtx = {
   currentUser: User | null;
   currentField: currentField | null;
   setCurrentField: React.Dispatch<React.SetStateAction<currentField | null>>;
+  ships: number;
+  setShips: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const globalContext = React.createContext<GlobalCtx>({
   currentUser: null,
   currentField: null,
   setCurrentField: () => void 0,
+  ships: 0,
+  setShips: () => void 0,
 });
 
 const App = () => {
@@ -46,6 +50,7 @@ const App = () => {
     field: [],
   });
   const [currentField, setCurrentField] = useState<currentField | null>(null);
+  const [ships, setShips] = useState(5);
   const [isGameStarted, setIsGameStarted] = useState(false);
 
   useEffect(() => {
@@ -64,7 +69,7 @@ const App = () => {
           globalState = update.state;
           break;
         case "updateShips":
-          let shootedUser = globalState.find(user => user.name === update.currentField.enemyname);
+          let shootedUser = globalState.find(user => user.name === update.currentField.username);
           
           if (shootedUser) {
             let shootedField = shootedUser.field[update.currentField.id]
@@ -86,7 +91,9 @@ const App = () => {
     <globalContext.Provider value={{
       currentField: currentField,
       setCurrentField: setCurrentField,
-      currentUser: currentUser
+      currentUser: currentUser,
+      ships: ships,
+      setShips: setShips, 
     }}>
       <>
         <h1 className="mainTitle">Морской бой</h1>

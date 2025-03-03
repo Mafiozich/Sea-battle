@@ -1,20 +1,14 @@
 import { field } from "../api/types/index";
 
-export type FieldMatrix = field[][];
-
 const createFieldArray = () => {
-  const newField: FieldMatrix = [];
-  for (let i = 0; i < 5; i++) {
-    const row: field[] = [];
-    for (let j = 0; j < 7; j++) {
-      const column = {
+  const newField: field[] = [];
+  for (let i = 0; i < 35; i++) {
+      const cell = {
         isShooted: false,
         isShip: false,
-      };
-      row.push(column);
+      }
+      newField.push(cell);
     }
-    newField.push(row);
-  }
 
   return newField;
 };

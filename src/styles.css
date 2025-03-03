@@ -107,8 +107,9 @@ button:hover {
     border: 1px solid #81d4fa;
 }
 
-.row {
-    display: flex;
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 52px);
     gap: 2px;
 }
 
