@@ -14,7 +14,7 @@ export default new class ApiWS {
     this.ws.onmessage = (event) => {
       try {
         const data: Update = JSON.parse(event.data as string);
-        console.log(data);
+        //console.log(data);
         
         this.listeners.forEach(callback => callback(data));
       } catch (e) {

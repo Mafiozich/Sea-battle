@@ -13,7 +13,6 @@ body {
     box-sizing: border-box;
 }
 
-/* Новый стиль для главного заголовка */
 .mainTitle {
     position: absolute;
     width: 100%;
@@ -30,6 +29,49 @@ body {
     content: "⚓";
     margin-left: 15px;
     filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+}
+
+.prepare-container {
+    width: 100%;
+    display: flex;
+    gap: 170px;
+    align-items: center;
+    justify-content: center;
+}
+
+.prepare-container .playerBoard {
+    transform: scale(1.5);
+}
+
+.ship-placement-block {
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000000;
+}
+
+.ship-placement-block span {
+    color:#01579b;
+}
+
+button {
+    height: 65px;
+    width: 240px;
+    border: none;
+    outline: none;
+    border-radius: 0.5rem;
+    font-size: 28px;
+    font-weight: 600;
+    color: white;
+    background-color: #01579b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
 }
 
 .playerBoard {
@@ -95,4 +137,24 @@ body {
 .cell:active {
     background: #81d4fa;
     transform: scale(0.95);
+}
+
+.blocked-cell {
+    background-color: #bbbbbb;
+    pointer-events: none;
+}
+
+.occupied-cell {
+    background-color: #01579b;
+    /* pointer-events: none; */
+}
+
+.occupied-cell:hover {
+    background: #00467c;
+    transform: scale(0.95);
+}
+
+.disabled {
+    background: #e1f5fe !important;
+    pointer-events: all !important;
 }

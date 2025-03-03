@@ -7,6 +7,7 @@ import './styles.css';
 import createFieldArray from './utils/createFieldArray';
 import { Field } from './components/Field';
 import PlayerBoard from './components/PlayerBoard';
+import PrepareToGame from './components/PrepareToGame';
 
 type GlobalCtx = {
   currentUser: User | null;
@@ -14,7 +15,7 @@ type GlobalCtx = {
   setCurrentField: React.Dispatch<React.SetStateAction<currentField | null>>;
 }
 
-const globalContext = React.createContext<GlobalCtx>({
+export const globalContext = React.createContext<GlobalCtx>({
   currentUser: null,
   currentField: null,
   setCurrentField: () => void 0,
@@ -39,13 +40,17 @@ const App = () => {
     },
   ];
 
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>({
+    id: 1,
+    name: "Muhma",
+    field: [],
+  });
   const [currentField, setCurrentField] = useState<currentField | null>(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
 
   useEffect(() => {
-    const serverIp = prompt("Enter server ip");
-    const username = prompt("Enter your name");
+    //const serverIp = prompt("Enter server ip");
+    //const username = prompt("Enter your name");
   });
 
   useEffect(() => {
@@ -86,9 +91,10 @@ const App = () => {
       <>
         <h1 className="mainTitle">Морской бой</h1>
         <div className="container">
-          {globalState.map((user) => (
-            <PlayerBoard user={user}/>
-          ))}
+          {/* {globalState.map((user) => (
+            <PlayerBoard user={user} key={user.id}/>
+          ))} */}
+          <PrepareToGame />
         </div>
       </>
     </globalContext.Provider>
