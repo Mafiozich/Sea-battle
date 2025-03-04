@@ -9,10 +9,11 @@ import { getAdjacentCells } from "../utils/getAdjacentCells";
 type OwnProps = {
   user: User;
   isPrepare: boolean;
+  setIDs:  React.Dispatch<React.SetStateAction<number[]>>;
 };
 
-const PlayerBoard: React.FC<OwnProps> = ({ user, isPrepare=false }) => {
-  const { currentUser, currentField, setCurrentField, ships, setShips } = useContext(globalContext);
+const PlayerBoard: React.FC<OwnProps> = ({ user, setIDs, isPrepare=false }) => {
+  const {currentUser, ships, setShips } = useContext(globalContext);
   const [field, setField] = useState<field[]>(createFieldArray());
 
 
@@ -36,46 +37,9 @@ const PlayerBoard: React.FC<OwnProps> = ({ user, isPrepare=false }) => {
     });
   }
 
-  // const placeShip = (strid: string) => {
-  //   let id = +strid;
-  //   setCurrentField({...field[id], id, username: ""});
-
-  //   setField(prev => {
-  //     let newField = [...prev];
-  //     let blockedCellIds = getAdjacentCells(id);
-      
-  //     if (newField[id].isShip === false) {
-  //       newField[id].isShip = true;
-  //       blockedCellIds.forEach(index => field[index].isShooted = true);
-  //     } else {
-  //       newField[id].isShip = false;
-  //       blockedCellIds.forEach(index => field[index].isShooted = false);
-
-  //       let ships = newField.map((cell, i) => {
-  //         if (cell.isShip) return i;
-  //       });
-
-  //       ships.forEach(el => {
-  //         if (el) {
-  //           let blockedCellIds = getAdjacentCells(el);
-  //           blockedCellIds.forEach(i => field[i].isShooted = true)
-  //         }
-  //       });
-  //     }
-      
-  //     if (ships === 1) {
-  //       newField.forEach(cell => cell.isShooted = true);
-
-  //       return newField;
-  //     }
-
-  //     return newField;
-  //   });
-  // }
-
   const placeShip = (strid: string) => {
     let id = +strid;
-    setCurrentField({ ...field[id], id, username: "" });
+    // setCurrentField({ ...field[id], id, username: "" });
 
     setField((prev) => {
       const newField = prev.map(cell => ({ ...cell })); // Создаем глубокую копию
@@ -88,6 +52,8 @@ const PlayerBoard: React.FC<OwnProps> = ({ user, isPrepare=false }) => {
           if (newField[index]) newField[index].isShooted = true;
         });
         setShips(prevShips => prevShips - 1);
+
+        setIDs(p => [...p, id]);
       } else {
         newField[id].isShip = false;
         newField.forEach(cell => cell.isShooted = false);
@@ -101,6 +67,12 @@ const PlayerBoard: React.FC<OwnProps> = ({ user, isPrepare=false }) => {
         });
         
         setShips(prevShips => prevShips + 1);
+
+        setIDs(p => {
+          let newState = [...p];
+          newState.pop();
+          return newState;
+          });
       }
 
       return newField;
