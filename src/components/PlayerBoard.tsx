@@ -1,32 +1,30 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import createFieldArray from "../utils/createFieldArray";
 import { Field } from "./Field";
 import { User, field } from "../api/types";
 import ApiWS from "../api/ws";
 import { globalContext } from "../App";
 import { getAdjacentCells } from "../utils/getAdjacentCells";
+import { createClassName } from "../utils/createClassName";
 
 type OwnProps = {
   user: User;
-  isPrepare: boolean;
-  setIDs:  React.Dispatch<React.SetStateAction<number[]>>;
+  isPrepareNow?: boolean;
+  setIDs?:  React.Dispatch<React.SetStateAction<number[]>>;
 };
 
-const PlayerBoard: React.FC<OwnProps> = ({ user, setIDs, isPrepare=false }) => {
-  const {currentUser, ships, setShips } = useContext(globalContext);
+const PlayerBoard: React.FC<OwnProps> = ({ user, setIDs, isPrepareNow=false }) => {
+  const {currentUser, currentField, ships, setShips} = useContext(globalContext);
   const [field, setField] = useState<field[]>(createFieldArray());
 
-
-  function shootShip(id: string) {
+  const shootShip = (id: string) => {
+    // if (!currentUser || (gameState && currentUser.name !== gameState.players[gameState.currentPlayerIndex].name))
     if (!currentUser) return;
-    if (currentUser.name === user.name) {
+
+    if (user.name === currentUser.name) {
+      alert("Нельзя стрелять в себя!");
       return;
     }
-    console.log({
-      enemyname: user.name,
-      shootId: parseInt(id),
-      username: currentUser?.name,
-    });
 
     ApiWS.invoke({
       type: "sendShoot",
@@ -35,11 +33,37 @@ const PlayerBoard: React.FC<OwnProps> = ({ user, setIDs, isPrepare=false }) => {
         shootIndex: parseInt(id),
       },
     });
-  }
+    console.log({
+      type: "sendShoot",
+      payload: {
+        username: user.name,
+        shootIndex: parseInt(id),
+      },
+    });
+    //setCurrentField({ ...field[+id], id: +id, username: user.name, isShooted: true});   по сути это происходит на беке
+  };
+
+  useEffect(() => {
+    setField(prev => {
+      let updatedField = [...prev];
+      
+      if (currentField 
+        && currentField.id 
+        && user.name === currentField.username) {
+          let field = updatedField[+currentField.id];
+          field.isShooted = true;
+          field.isShip = currentField.isShip;
+        }
+
+      return updatedField;
+    });
+
+    return () => {}
+  }, [currentField])
 
   const placeShip = (strid: string) => {
     let id = +strid;
-    // setCurrentField({ ...field[id], id, username: "" });
+    if (!setIDs) return;
 
     setField((prev) => {
       const newField = prev.map(cell => ({ ...cell })); // Создаем глубокую копию
@@ -72,9 +96,8 @@ const PlayerBoard: React.FC<OwnProps> = ({ user, setIDs, isPrepare=false }) => {
           let newState = [...p];
           newState.pop();
           return newState;
-          });
+        });
       }
-
       return newField;
     });
 };
@@ -83,16 +106,21 @@ const PlayerBoard: React.FC<OwnProps> = ({ user, setIDs, isPrepare=false }) => {
     if (ships === 0) {
       setField(prev => prev.map(cell => ({ ...cell, isShooted: true })));
     }
+
+    return () => {}
   }, [ships]);
 
   return (
     <div className="playerBoard">
       <h3 className="boardTitle">{user.name}</h3>
+
       <Field
         field={field} 
-        onclick={isPrepare ? placeShip : shootShip} 
-        isHide={isPrepare ? false : true}
+        onclick={isPrepareNow ? placeShip : shootShip} 
+        isHide={isPrepareNow ? false : true}
       />
+
+      {!isPrepareNow && <h4 className={createClassName("playerTurn", 1 && "disabledTurn")}>Твой ход</h4>}
     </div>
   );
 };

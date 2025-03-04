@@ -9,14 +9,21 @@ const PrepareToGame: React.FC = () => {
 
   if (!currentUser) return;
 
-function commitChanges(){
-    ApiWS.invoke
-
-}
+  const commitChanges = () => {
+    if (IDs.length !== 5) return;
+    console.log({
+      type: "sendUserShips",
+      payload: { shipsIndex: IDs }
+    });
+    ApiWS.invoke({
+      type: "sendUserShips",
+      payload: { shipsIndex: IDs }
+    });
+  }
 
   return (
     <div className="prepare-container">
-      <PlayerBoard user={currentUser} setIDs={setIDs} isPrepare />
+      <PlayerBoard user={currentUser} setIDs={setIDs} isPrepareNow />
       <div className="ship-placement-block">
         <h3>Ships: <span>{ships}</span>X</h3>
         <button onClick={commitChanges}>Начать игру</button>
