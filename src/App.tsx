@@ -41,8 +41,6 @@ const App = () => {
     currentPlayerIndex: 0
   });
 
-  //const [isGameStarted, setIsGameStarted] = useState(false);
-
   useEffect(() => {
     let user = localStorage.getItem("currentUser");
     if (user) {
@@ -50,14 +48,14 @@ const App = () => {
       return;
     }
 
-    //let serverIp = prompt("Enter server ip");
-    //while (!serverIp?.trim()) serverIp = prompt("Enter server ip");
+    let serverIp = prompt("Enter server ip");
+    while (!serverIp?.trim()) serverIp = prompt("Enter server ip");
 
-    //let username = prompt("Enter your name");
-    //while (!username?.trim()) username = prompt("Enter ypur name");
+    let username = prompt("Enter your name");
+    while (!username?.trim()) username = prompt("Enter ypur name");
     
-    //ApiWS.setServerIp(serverIp);
-    //ApiWS.invoke({type: 'sendAuth', payload: {name: username}});
+    ApiWS.setServerIp(serverIp);
+    ApiWS.invoke({type: 'sendAuth', payload: {name: username}});
   });
 
   useEffect(() => {
@@ -96,7 +94,7 @@ const App = () => {
   };
 
   if (gameState.players.length !== 3) {
-    //return <h1 className="playersIndicator">{gameState.players.length}/3</h1>
+    return <h1 className="playersIndicator">{gameState.players.length}/3</h1>
   }
   
   return (

@@ -2,11 +2,22 @@ import { Invoke, Update, UpdateHandler } from "./types";
 
 export default new class ApiWS {
   private serverIp = "";
-  private ws = new WebSocket(this.serverIp);
+  private ws: WebSocket | null = null;
   private _isOpen = false;
   private listeners: UpdateHandler[] = [];
 
-  constructor() {
+  constructor() {}
+
+  public setServerIp(ip: string) {
+    if (this.serverIp === ip) return;
+    
+    this.serverIp = ip;
+    this.connect(); 
+  }
+  
+  private connect() {
+    if (!this.ws) return;
+
     this.ws.onopen = () => {
       this._isOpen = true;
       console.log("[ApiWS]: connection open succesfully");
@@ -41,17 +52,13 @@ export default new class ApiWS {
     this.listeners = this.listeners.filter(cb => cb !== callback);
   }
 
-  public setServerIp(ip: string) {
-    this.serverIp = ip;
-  }
-
   public invoke(data: Invoke) {
     if (!this._isOpen) {
       console.error("[ApiWS]: can not invoke method. No connection");
       return;
     }
     
-    this.ws.send(JSON.stringify(data));
+    if (this.ws) this.ws.send(JSON.stringify(data));
   }
 
   get isOpen() {
