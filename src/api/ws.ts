@@ -16,32 +16,42 @@ export default new class ApiWS {
   }
   
   private connect() {
-    if (!this.ws) return;
+    if (this.ws) {
+      this.ws.close();
+      this._isOpen = false;
+    }
+
+    if (!this.serverIp) {
+      console.error("[ApiWS]: Server IP not set!");
+      return;
+    }
+
+    this.ws = new WebSocket(this.serverIp);
 
     this.ws.onopen = () => {
       this._isOpen = true;
-      console.log("[ApiWS]: connection open succesfully");
-    }
+      console.log("[ApiWS]: Connection opened successfully");
+    };
 
     this.ws.onmessage = (event) => {
       try {
-        const data: Update = JSON.parse(event.data as string);
+        const data: Update = JSON.parse(event.data);
         //console.log(data);
         
         this.listeners.forEach(callback => callback(data));
       } catch (e) {
         console.error("Error parsing JSON:", e);
       }
-    }
-    
+    };
+
     this.ws.onerror = (error) => {
-      console.error("[ApiWS]: ws error:", error);
-    }
+      console.error("[ApiWS]: WebSocket error:", error);
+    };
 
     this.ws.onclose = () => {
       this._isOpen = false;
-      console.log("[ApiWS]: lost connection");
-    }
+      console.log("[ApiWS]: Connection closed");
+    };
   }
 
   public onUpdate(callback: UpdateHandler) {
