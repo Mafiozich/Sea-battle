@@ -1,7 +1,8 @@
 import { Invoke, Update, UpdateHandler } from "./types";
 
 export default new class ApiWS {
-  private ws = new WebSocket("ws://192.168.1.20:8080/ws");
+  private serverIp = "";
+  private ws = new WebSocket(this.serverIp);
   private _isOpen = false;
   private listeners: UpdateHandler[] = [];
 
@@ -38,6 +39,10 @@ export default new class ApiWS {
 
   public offUpdate(callback: UpdateHandler) {
     this.listeners = this.listeners.filter(cb => cb !== callback);
+  }
+
+  public setServerIp(ip: string) {
+    this.serverIp = ip;
   }
 
   public invoke(data: Invoke) {

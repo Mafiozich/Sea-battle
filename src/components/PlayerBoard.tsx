@@ -17,8 +17,8 @@ const PlayerBoard: React.FC<OwnProps> = ({ user, setIDs, isPrepareNow=false }) =
   const {currentUser, currentField, ships, setShips} = useContext(globalContext);
   const [field, setField] = useState<field[]>(createFieldArray());
 
-  const shootShip = (id: string) => {
-    // if (!currentUser || (gameState && currentUser.name !== gameState.players[gameState.currentPlayerIndex].name))
+  const shootShip = (strid: string) => {
+    let id = +strid;
     if (!currentUser) return;
 
     if (user.name === currentUser.name) {
@@ -29,18 +29,10 @@ const PlayerBoard: React.FC<OwnProps> = ({ user, setIDs, isPrepareNow=false }) =
     ApiWS.invoke({
       type: "sendShoot",
       payload: {
-        username: user.name,
-        shootIndex: parseInt(id),
+        [user.name]: id,
+        shootIndex: id,
       },
     });
-    console.log({
-      type: "sendShoot",
-      payload: {
-        username: user.name,
-        shootIndex: parseInt(id),
-      },
-    });
-    //setCurrentField({ ...field[+id], id: +id, username: user.name, isShooted: true});   по сути это происходит на беке
   };
 
   useEffect(() => {

@@ -41,12 +41,11 @@ export type Update = {
 export type UpdateHandler = (update: Update) => void;
 
 // invoke types
-type InvokeType = "sendShoot" | "sendAuth";
+type InvokeType = "sendShoot" | "sendAuth" | "sendUserShips";
 
 type Invoke$Shoot = {
   payload: {
-    username: string;       //в кого стреляют
-    shootIndex: number;     //id в хтмл
+    [username: string]: number; 
   }
 }
 
@@ -56,11 +55,19 @@ type Invoke$Auth = {
   }
 }
 
-type InvokeInputByType = {
+type Invoke$UserShips = {
+  payload: { 
+    username: string
+    field: number[]        // idx кораблей 
+  }
+}
+
+type InvokeDataByType = {
   "sendShoot": Invoke$Shoot;
   "sendAuth": Invoke$Auth;
+  "sendUserShips": Invoke$UserShips;
 }
 
 export type Invoke = {
-  [I in InvokeType]: { type: I } & InvokeInputByType[I];
+  [I in InvokeType]: { type: I } & InvokeDataByType[I];
 }[InvokeType];

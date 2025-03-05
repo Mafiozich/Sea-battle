@@ -13,6 +13,18 @@ body {
     box-sizing: border-box;
 }
 
+.gameStopped {
+    pointer-events: none!;
+}
+
+.playersIndicator {
+    font-family: Andale Mono, Helvetica, sans-serif;
+    color: #292929;
+    margin-top: 20%;
+    font-size: 45px;
+    text-align: center;
+}
+
 .mainTitle {
     position: absolute;
     width: 100%;
@@ -158,4 +170,17 @@ button:hover {
 .disabled {
     background: #e1f5fe !important;
     pointer-events: all !important;
+}
+
+.playerTurn {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #4fc3f7;
+    background-color: transparent;
+}
+
+.playerTurn.disabledTurn {
+    color: #bbbbbb;
 }
